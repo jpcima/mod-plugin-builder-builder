@@ -1,0 +1,118 @@
+name: build
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build_for_modduo:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check out MPB
+        run: |
+          pwd
+          git clone https://github.com/moddevices/mod-plugin-builder.git
+          pushd mod-plugin-builder
+          git checkout `cat $GITHUB_WORKSPACE/revision.txt`
+          git submodule update --init --recursive
+          sed -i 's/CT_LOG_PROGRESS_BAR=.*/CT_LOG_PROGRESS_BAR=n/' toolchain/*.config
+          popd
+
+      # - name: Build MPB
+      #   run: |
+      #     docker build --build-arg platform=modduo -q -t jpcima/mod-plugin-builder:modduo mod-plugin-builder/docker
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/mod-plugin-builder:modduo
+          build-args: platform=modduo
+          context: ${{github.workspace}}/mod-plugin-builder/docker
+
+  build_for_modduox:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+ 
+      - name: Check out MPB
+        run: |
+          pwd
+          git clone https://github.com/moddevices/mod-plugin-builder.git
+          pushd mod-plugin-builder
+          git checkout `cat $GITHUB_WORKSPACE/revision.txt`
+          git submodule update --init --recursive
+          sed -i 's/CT_LOG_PROGRESS_BAR=.*/CT_LOG_PROGRESS_BAR=n/' toolchain/*.config
+          popd
+
+      # - name: Build MPB
+      #   run: |
+      #     docker build --build-arg platform=modduox -q -t jpcima/mod-plugin-builder:modduox mod-plugin-builder/docker
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/mod-plugin-builder:modduox
+          build-args: platform=modduox
+          context: ${{github.workspace}}/mod-plugin-builder/docker
+
+  build_for_moddwarf:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+ 
+      - name: Check out MPB
+        run: |
+          pwd
+          git clone https://github.com/moddevices/mod-plugin-builder.git
+          pushd mod-plugin-builder
+          git checkout `cat $GITHUB_WORKSPACE/revision.txt`
+          git submodule update --init --recursive
+          sed -i 's/CT_LOG_PROGRESS_BAR=.*/CT_LOG_PROGRESS_BAR=n/' toolchain/*.config
+          popd
+
+      # - name: Build MPB
+      #   run: |
+      #     docker build --build-arg platform=moddwarf -q -t jpcima/mod-plugin-builder:moddwarf mod-plugin-builder/docker
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/mod-plugin-builder:moddwarf
+          build-args: platform=moddwarf
+          context: ${{github.workspace}}/mod-plugin-builder/docker
